@@ -52,19 +52,27 @@ public class MessageService {
      * @return the updated (amended) message. Return null if the specified message_id does not exist in the database. 
      */
     public Message updateMessage(int message_id, Message message) {
-        
-        Message amended = new Message();
 
-        // if message exists
-        if(!(messageDAO.getMessageById(message_id) == null)) {
-            // Update message
+        // Create new message object with values of 0 or null
+        Message newMessage = new Message();
+        
+        String str = "";
+        
+        if (messageDAO.messageExists(message_id) == false) {
+            System.out.println("No such message id exists.");
+            newMessage = null;
+        } else if (message.getMessage_text().equals(str)) {
+            System.out.println("Message text must not be blank");
+            newMessage = null;
+        } else if (message.getMessage_text().length() > 255) {
+            System.out.println("Message too long!");
+            newMessage = null;
+        } else {
+            // Set values of the object to the inserted message values
             messageDAO.updateMessage(message_id, message);
-            amended = messageDAO.getMessageById(message_id);
-        // otherwise return null
-        } else if (messageDAO.getMessageById(message_id) == null) {
-            amended = null;
+            newMessage = messageDAO.getMessageById(message_id);
         }
-        return amended;
+        return newMessage;
     }
 
 // -------------------------------------------------------------------------------------

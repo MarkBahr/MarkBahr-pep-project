@@ -63,4 +63,21 @@ public class AccountService {
 
         return verified;
     }
+
+// ----------------------------------------------------------------------------------------
+
+    /**
+     * 
+     * @param username The username entered
+     * @param password the password entered
+     * @return the account, including account_id, username & password
+     */
+    public Account getAccount(String username, String password) {
+        
+        Account account = new Account();
+
+        account = accountDAO.getAccount(username, password);
+
+        return account;
+    }
 }

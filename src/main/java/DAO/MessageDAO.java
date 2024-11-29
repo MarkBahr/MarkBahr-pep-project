@@ -65,7 +65,7 @@ public class MessageDAO {
         Connection connection = ConnectionUtil.getConnection();
 
         // Create empty arraylist for the messages
-        List<Message> messages = new ArrayList<>();
+        Message myMessage = new Message();
 
         try {
 
@@ -84,14 +84,14 @@ public class MessageDAO {
             // Traverse through results to get each column, even if empty
             while(rs.next()) {
                 Message message = new Message(rs.getInt("message_id"), rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch"));
-                messages.add(message);
+                myMessage = message;
             }
 
         } catch(SQLException e) {
             e.printStackTrace();
         }
         // Return the message
-        return messages.get(0);
+        return myMessage;
     } 
 
 // -------------------------------------------------------------------------------------
@@ -141,6 +141,46 @@ public class MessageDAO {
 // -------------------------------------------------------------------------------------
 
     /**
+     * METHOD FOR checking if a message exists in the
+     * 
+     * @param message_id
+     * @return
+     */
+    public boolean messageExists(int message_id) {
+        // Establish connection
+        Connection connection = ConnectionUtil.getConnection();
+        
+        // Boolean variable for telling if username appears in the database.
+        boolean userExists = false;
+
+        try {
+            // SQL statement: Look for row with current username in the database
+            String sql = "SELECT * FROM message WHERE message_id = ?;";
+            
+            // Create preparedStatement
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            // Prepared statement methods (dynamically set username for query)
+            preparedStatement.setInt(1, message_id);
+
+            // Execute the query and store it as ResultSet object
+            ResultSet rs = preparedStatement.executeQuery();
+            
+            // If any rows returned, user already exists
+            if(rs.next()) {
+                userExists = true;
+            } 
+
+        } catch(SQLException e) {
+            System.out.println(e.getMessage());
+
+        }
+        return userExists;
+    }
+
+// -------------------------------------------------------------------------------------
+
+    /**
      * METHOD FOR updating a message in the database by message_id
      * 
      * @param message_id the id for a specific message
@@ -151,19 +191,19 @@ public class MessageDAO {
         Connection connection = ConnectionUtil.getConnection();
 
         try {
+            
             // String variable for sql statement
-            String sql = "UPDATE message SET posted_by = ?, message_text = ?, time_posted_epoch = ?, WHERE message_id = ?;";
-
+            String sql = "UPDATE message SET posted_by = ?, message_text = ?, time_posted_epoch = ? WHERE message_id = ?;";
+            
             // Prepared Statement
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-
+            
             // Prepared Statement set methods
             preparedStatement.setInt(1, message.getPosted_by());
             preparedStatement.setString(2, message.getMessage_text());
             preparedStatement.setLong(3, message.getTime_posted_epoch());
             preparedStatement.setInt(4, message_id);
-
-            // Execute query
+            
             preparedStatement.executeUpdate();
 
         } catch(SQLException e) {
@@ -233,7 +273,7 @@ public class MessageDAO {
 
             // Traverse through results to get each column
             while(rs.next()) {
-                Message message = new Message(rs.getInt("message_id"), rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch"));
+                Message message = new Message(rs.getInt("message_id"), rs.getInt("posted_by"), rs.getString("message_text"), rs.getInt("time_posted_epoch"));
                 messages.add(message);
             }
 
@@ -241,46 +281,5 @@ public class MessageDAO {
             System.out.println(e.getMessage());
         }
         return messages;
-    }
-
-
-// -------------------------------------------------------------------------------------
-
-    /**
-     * METHOD FOR checking if a message exists in the
-     * 
-     * @param message_id
-     * @return
-     */
-    public boolean messageExists(int message_id) {
-        // Establish connection
-        Connection connection = ConnectionUtil.getConnection();
-        
-        // Boolean variable for telling if username appears in the database.
-        boolean userExists = false;
-
-        try {
-            // SQL statement: Look for row with current username in the database
-            String sql = "SELECT * FROM message WHERE message_id = ?;";
-            
-            // Create preparedStatement
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-
-            // Prepared statement methods (dynamically set username for query)
-            preparedStatement.setInt(1, message_id);
-
-            // Execute the query and store it as ResultSet object
-            ResultSet rs = preparedStatement.executeQuery();
-            
-            // If any rows returned, user already exists
-            if(rs.first()) {
-                userExists = true;
-            } 
-
-        } catch(SQLException e) {
-            System.out.println(e.getMessage());
-
-        }
-        return userExists;
     }
 }

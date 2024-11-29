@@ -38,14 +38,14 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.post("register", this::postAccountHandler); // Post for inserting accounts (registration)
-        app.post("login", this::loginHandler); // Post for a user to verify login credentials
-        app.post("messages", this::postMessageHandler); // Post for inserting messages
-        app.get("messages", this::getAllMessagesHandler); // GET for retrieving all messages
-        app.get("messages/{message_id}", this::getMessageByIdHandler); // GET for retrieving a message by message_id
-        app.delete("messages/{message_id}", this::deleteMessageHandler); // DELETE a message by message_id
-        app.put("messages/{message_id}", this::updateMessageHandler); // Put for updating messages
-        app.get("accounts/{account_id}", this::getUserMessagesHandler); // GET all messages created by a certain user
+        app.post("/register", this::postAccountHandler); // Post for inserting accounts (registration)
+        app.post("/login", this::loginHandler); // Post for a user to verify login credentials
+        app.post("/messages", this::postMessageHandler); // Post for inserting messages
+        app.get("/messages", this::getAllMessagesHandler); // GET for retrieving all messages
+        app.get("/messages/{message_id}", this::getMessageByIdHandler); // GET for retrieving a message by message_id
+        app.delete("/messages/{message_id}", this::deleteMessageHandler); // DELETE a message by message_id
+        app.patch("/messages/{message_id}", this::updateMessageHandler); // Put for updating messages
+        app.get("/accounts/{account_id}/messages", this::getUserMessagesHandler); // GET all messages created by a certain user
 
         return app;
     }
@@ -121,9 +121,8 @@ public class SocialMediaController {
             ctx.status(400);
         // else, convert to JSON, if issue arises, throw JsonProcessingException 
         } else {
-
+            ctx.json(mapper.writeValueAsString(updatedMessage));
         }
-        ctx.json(mapper.writeValueAsString(updatedMessage));
     }
 
 // --------------------------------------------------------------------------------------------
@@ -214,10 +213,10 @@ public class SocialMediaController {
 
         // If the username and password are correct, "Login succcessful"
         if(accountService.verifyUser(username, password)) {
-            ctx.result("Login successful!");
+            ctx.json(accountService.getAccount(username, password));
         // If not, Unauthorized response
         } else {
-            throw new UnauthorizedResponse("Invalid credentials");
+            ctx.status(401);
         }
     }
 }

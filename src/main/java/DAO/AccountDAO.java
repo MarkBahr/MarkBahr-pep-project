@@ -2,6 +2,8 @@ package DAO;
 
 // Java Built-in Imports
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 // Imports of classes from this project
 import Model.Account; // To enable access to the Account class and the ability to create Account objects
@@ -135,4 +137,44 @@ public class AccountDAO {
         }
         return confirmUser;
     }
+
+// ---------------------------------------------------------------------------------------
+
+    /**
+     * 
+     * @param username The username entered
+     * @param password the password entered
+     * @return the account, including account_id, username & password
+     */    
+    public Account getAccount(String username, String password) {
+
+        // Establish connection
+        Connection connection = ConnectionUtil.getConnection();
+
+        try {
+
+            // Create variable to hole sql SELECT statement
+            String sql = "SELECT * FROM account WHERE (username = ?) AND (password = ?);";
+
+            // Create preparedStatement
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            
+            // Prepared statement methods (dynamically set username and password for query)
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+
+            // Execute the query and store it as ResultSet object
+            ResultSet rs = preparedStatement.executeQuery();
+
+            // Traverse through results to get each column, even if empty
+            if(rs.next()) {
+                return new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
+            }
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        // Return the message
+        return null;
+    } 
 }
