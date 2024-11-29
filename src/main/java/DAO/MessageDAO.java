@@ -186,7 +186,7 @@ public class MessageDAO {
      * @param message_id the id for a specific message
      * @param message an object containing a message, which does not contain a message_id
      */
-    public void updateMessage(int message_id, Message message) {
+    public void updateMessage(int message_id, Message upMessage) {
         // Establish connection
         Connection connection = ConnectionUtil.getConnection();
 
@@ -199,9 +199,9 @@ public class MessageDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             
             // Prepared Statement set methods
-            preparedStatement.setInt(1, message.getPosted_by());
-            preparedStatement.setString(2, message.getMessage_text());
-            preparedStatement.setLong(3, message.getTime_posted_epoch());
+            preparedStatement.setInt(1, upMessage.getPosted_by());
+            preparedStatement.setString(2, upMessage.getMessage_text());
+            preparedStatement.setLong(3, upMessage.getTime_posted_epoch());
             preparedStatement.setInt(4, message_id);
             
             preparedStatement.executeUpdate();
@@ -273,7 +273,7 @@ public class MessageDAO {
 
             // Traverse through results to get each column
             while(rs.next()) {
-                Message message = new Message(rs.getInt("message_id"), rs.getInt("posted_by"), rs.getString("message_text"), rs.getInt("time_posted_epoch"));
+                Message message = new Message(rs.getInt("message_id"), rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch"));
                 messages.add(message);
             }
 
