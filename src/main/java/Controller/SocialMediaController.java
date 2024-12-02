@@ -3,7 +3,6 @@ package Controller;
 // Imports from Javalin and Jackson
 import io.javalin.Javalin;
 import io.javalin.http.Context;
-import io.javalin.http.UnauthorizedResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -172,7 +171,7 @@ public class SocialMediaController {
     private void getUserMessagesHandler(Context ctx) {
             
         // obtain account id,
-        int account_id = Integer.parseInt(ctx.pathParam("posted_by"));
+        int account_id = Integer.parseInt(ctx.pathParam("account_id"));
         
         // Get the message by account_id
         ctx.json(messageService.getUserMessages(account_id));
@@ -206,14 +205,19 @@ public class SocialMediaController {
      * 
      * @param ctx
      */
-    private void loginHandler(Context ctx) {
+    private void loginHandler(Context ctx) throws JsonProcessingException {
         
-        String username = ctx.formParam("username");
-        String password = ctx.formParam("password");
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(ctx.body(), Account.class);
+              
+        // String username = ctx.formParam("username");
+        // String password = ctx.formParam("password");
+
+        Account verifiedAccount = accountService.getAccount(account.username, account.password);
 
         // If the username and password are correct, "Login succcessful"
-        if(accountService.verifyUser(username, password)) {
-            ctx.json(accountService.getAccount(username, password));
+        if(accountService.verifyUser(account.username, account.password)) {
+            ctx.json(verifiedAccount);
         // If not, Unauthorized response
         } else {
             ctx.status(401);

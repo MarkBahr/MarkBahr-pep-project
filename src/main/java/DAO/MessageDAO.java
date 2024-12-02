@@ -185,6 +185,7 @@ public class MessageDAO {
      * 
      * @param message_id the id for a specific message
      * @param message an object containing a message, which does not contain a message_id
+     * @return message: The updated message
      */
     public void updateMessage(int message_id, Message upMessage) {
         // Establish connection
@@ -193,18 +194,18 @@ public class MessageDAO {
         try {
             
             // String variable for sql statement
-            String sql = "UPDATE message SET posted_by = ?, message_text = ?, time_posted_epoch = ? WHERE message_id = ?;";
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?;";
             
             // Prepared Statement
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             
             // Prepared Statement set methods
-            preparedStatement.setInt(1, upMessage.getPosted_by());
-            preparedStatement.setString(2, upMessage.getMessage_text());
-            preparedStatement.setLong(3, upMessage.getTime_posted_epoch());
-            preparedStatement.setInt(4, message_id);
+            preparedStatement.setString(1, upMessage.getMessage_text());
+            preparedStatement.setInt(2, message_id);
             
-            preparedStatement.executeUpdate();
+            // Exceute update
+            int updatedRows = preparedStatement.executeUpdate();
+            System.out.println(updatedRows);
 
         } catch(SQLException e) {
             System.out.println(e.getMessage());

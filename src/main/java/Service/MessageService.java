@@ -70,7 +70,7 @@ public class MessageService {
         } else {
             // Set values of the object to the inserted message values
             messageDAO.updateMessage(message_id, message);
-            newMessage = messageDAO.getMessageById(message_id);
+            newMessage = getMessageById(message_id);
         }
         return newMessage;
     }

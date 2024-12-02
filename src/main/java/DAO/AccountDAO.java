@@ -2,8 +2,6 @@ package DAO;
 
 // Java Built-in Imports
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 // Imports of classes from this project
 import Model.Account; // To enable access to the Account class and the ability to create Account objects
@@ -151,6 +149,8 @@ public class AccountDAO {
         // Establish connection
         Connection connection = ConnectionUtil.getConnection();
 
+        Account verifiedAccount = new Account();
+
         try {
 
             // Create variable to hole sql SELECT statement
@@ -168,13 +168,14 @@ public class AccountDAO {
 
             // Traverse through results to get each column, even if empty
             if(rs.next()) {
-                return new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
+                Account account =  new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
+                verifiedAccount = account;
             }
 
         } catch(SQLException e) {
             e.printStackTrace();
         }
         // Return the message
-        return null;
-    } 
+        return verifiedAccount;
+    }
 }
