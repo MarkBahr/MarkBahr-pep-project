@@ -1,5 +1,9 @@
 # Project: Social media blog API
 
+## Purpose
+
+I completed this project as part of Revature's pre-training program. This project utilized Java's JDBC Connectivity and Javalin. See the application requirements below.
+
 ## Background 
 
 When building a full-stack application, we're typically concerned with both a front end, that displays information to the user and takes in input, and a backend, that manages persisted information.
